@@ -15,14 +15,9 @@ class LaravelGettingLocationsServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
 
-            // Publishing the configuration file.
             $this->publishes([
                 __DIR__.'/../config/laravelmakeservice.php' => config_path('laravelmakeservice.php'),
             ], 'laravelmakeservice.config');
-
-            $this->commands([
-                ServiceMakeCommand::class
-            ]);
         }
     }
 
