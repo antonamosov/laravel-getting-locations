@@ -5,6 +5,7 @@ namespace Antonamosov\LaravelGettingLocations\Services;
 use Antonamosov\LaravelGettingLocations\CurlClient;
 use Antonamosov\LaravelGettingLocations\Exceptions\AttributesFiledsNotAllowedException;
 use Antonamosov\LaravelGettingLocations\Exceptions\ConnectionParameterNotDefinedException;
+use Antonamosov\LaravelGettingLocations\Exceptions\DecodeJsonResultException;
 use Antonamosov\LaravelGettingLocations\Exceptions\MapPointParametersNotDefinedException;
 use Antonamosov\LaravelGettingLocations\Exceptions\CurlClientException;
 use Antonamosov\LaravelGettingLocations\Exceptions\FailedJsonFormatException;
@@ -89,6 +90,10 @@ class BingMapsService implements MapServiceInterface
             $this->logError($e);
             return $this->getErrorResult('Failed JSON Format.');
         }
+        catch (DecodeJsonResultException $e) {
+            $this->logError($e);
+            return $this->getErrorResult('Error while decode json result.');
+        }
         catch (ConnectionParameterNotDefinedException $e) {
             $this->logError($e);
             return $this->getErrorResult($e->getMessage());
@@ -145,6 +150,7 @@ class BingMapsService implements MapServiceInterface
 
     /**
      * @return object
+     * @throws FailedJsonFormatException
      */
     private function getSuccessResult()
     {
@@ -153,24 +159,35 @@ class BingMapsService implements MapServiceInterface
 
     /**
      * @return object
+     * @throws FailedJsonFormatException
      */
     private function getFormattedLocations()
     {
-        $body = json_decode($this->response->getBody()->getContents());
+        try {
+            $body = json_decode($this->response->getBody()->getContents());   
+        }
+        catch (\Exception $e) {
+            throw new DecodeJsonResultException($e->getMessage());
+        }
         $data = (object) [
             'locations' => [],
         ];
 
-        foreach ($body->resourceSets as $resourceSet) {
-            foreach ($resourceSet->resources as $resource) {
-                $data->locations[] = (object) [
-                    'name' => $resource->name,
-                    'coordinates' => (object) [
-                        'lat' => $resource->point->coordinates[0],
-                        'long' => $resource->point->coordinates[1],
-                    ],
-                ];
+        try {
+            foreach ($body->resourceSets as $resourceSet) {
+                foreach ($resourceSet->resources as $resource) {
+                    $data->locations[] = (object) [
+                        'name' => $resource->name,
+                        'coordinates' => (object) [
+                            'lat' => $resource->point->coordinates[0],
+                            'long' => $resource->point->coordinates[1],
+                        ],
+                    ];
+                }
             }
+        }
+        catch (\Exception $e) {
+            throw new FailedJsonFormatException($e->getMessage());
         }
 
         return $data;
