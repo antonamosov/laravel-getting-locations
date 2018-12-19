@@ -1,0 +1,41 @@
+{
+    "name": "antonamosov/laravel-getting-locations",
+    "description": "A getting of JSON-encoded locations data stored in predefined format.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Anton Amosov",
+            "email": "amosaa@mail.ru"
+        }
+    ],
+    "homepage": "https://github.com/antonamosov/laravel-getting-locations",
+    "keywords": ["Laravel"],
+    "require": {
+        "illuminate/support": "~5",
+        "guzzlehttp/guzzle":"~6.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Antonamosov\\LaravelGettingLocations\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Antonamosov\\LaravelGettingLocations\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Antonamosov\\LaravelGettingLocations\\LaravelGettingLocationsServiceProvider"
+            ],
+            "aliases": {
+                "LaravelGettingLocations": "Antonamosov\\LaravelGettingLocations\\Facades\\LaravelGettingLocations"
+            }
+        }
+    },
+    "minimum-stability": "dev"
+}
