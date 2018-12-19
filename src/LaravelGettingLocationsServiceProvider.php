@@ -14,10 +14,9 @@ class LaravelGettingLocationsServiceProvider extends ServiceProvider
     public function boot()
     {
         if ($this->app->runningInConsole()) {
-
             $this->publishes([
-                __DIR__.'/../config/laravelmakeservice.php' => config_path('laravelmakeservice.php'),
-            ], 'laravelmakeservice.config');
+                __DIR__ . '/../config/getting-locations.php' => config_path('getting-locations.php'),
+            ], 'getting-locations.config');
         }
     }
 
@@ -28,11 +27,13 @@ class LaravelGettingLocationsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/laravelmakeservice.php', 'laravelmakeservice');
+        $this->mergeConfigFrom(__DIR__ . '/../config/getting-locations.php', 'laravelgettinglocations');
 
-        // Register the service the package provides.
-        $this->app->singleton('laravelmakeservice', function ($app) {
-            return new LaravelMakeService;
+        $this->app->singleton('laravelgettinglocations', function ($app) {
+
+            $service = config('getting-locations.service');
+
+            return new LaravelGettingLocations(new $service(new CurlClient()));
         });
     }
 
@@ -43,6 +44,6 @@ class LaravelGettingLocationsServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return ['laravelmakeservice'];
+        return ['laravelgettinglocations'];
     }
 }
