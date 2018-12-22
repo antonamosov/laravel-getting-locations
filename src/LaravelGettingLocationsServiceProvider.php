@@ -13,11 +13,9 @@ class LaravelGettingLocationsServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__ . '/../config/getting-locations.php' => config_path('getting-locations.php'),
-            ], 'getting-locations.config');
-        }
+        $this->publishes([
+            __DIR__ . '/../config/getting-locations.php' => config_path('getting-locations.php'),
+        ], 'config');
     }
 
     /**
