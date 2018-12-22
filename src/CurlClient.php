@@ -168,7 +168,7 @@ class CurlClient
     private function checkConnectionParameters()
     {
         foreach ($this->connectionParameters as $parameterName => $parameter) {
-            if (! isset($this->requiredConnectionParameters[$parameterName])) {
+            if (! isset(array_flip($this->requiredConnectionParameters)[$parameterName])) {
                 throw new ConnectionParameterNotDefinedException($parameterName . ' connection parameter must be defined.');
             }
         }

@@ -19,13 +19,34 @@ Antonamosov\LaravelGettingLocations\LaravelGettingLocationsServiceProvider::clas
 And add the alias to aliases array in config/app.php
 
 ``` bash
-Antonamosov\LaravelGettingLocations\Facades\LaravelGettingLocations::class,
+'GettingLocations' => Antonamosov\LaravelGettingLocations\Facades\LaravelGettingLocations::class,
 ```
 
-You can also publish the config file to change implementations
+Publish the config file to change implementations, select service and API key:
 
 ``` bash
-php artisan vendor:publish --provider="Antonamosov\LaravelGettingLocations\LaravelGettingLocationsServiceProvider" --tag="config"
+$ php artisan vendor:publish --provider="Antonamosov\LaravelGettingLocations\LaravelGettingLocationsServiceProvider" --tag="config"
+```
+
+## Usage
+
+``` bash
+use LaravelGettingLocations;
+
+$response = LaravelGettingLocations::getLocations([
+        'name' => 'Moscow City',
+        'address' => 'Lenina',
+        'postalCode' => '185000',
+        'country' => 'Russia',
+    ]);
+        
+if ($response->success) {
+        foreach ($response->data->locations as $location) {
+            echo $location->name . "\n";
+            echo $location->coordinates->lat . "\n";
+            echo $location->coordinates->long . "\n\n";
+        }
+    }        
 ```
 
 ## Testing

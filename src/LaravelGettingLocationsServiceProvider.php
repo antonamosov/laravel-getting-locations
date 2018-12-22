@@ -2,6 +2,7 @@
 
 namespace Antonamosov\LaravelGettingLocations;
 
+use Antonamosov\LaravelGettingLocations\Exceptions\ConfigFileNotPublishedException;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelGettingLocationsServiceProvider extends ServiceProvider
@@ -30,6 +31,9 @@ class LaravelGettingLocationsServiceProvider extends ServiceProvider
         $this->app->singleton('laravelgettinglocations', function ($app) {
 
             $service = config('getting-locations.service');
+            if (! $service) {
+                throw new ConfigFileNotPublishedException('Config file has not been published.');
+            }
 
             return new LaravelGettingLocations(new $service(new CurlClient()));
         });
