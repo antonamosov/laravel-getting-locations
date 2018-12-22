@@ -2,7 +2,7 @@
 
 namespace Antonamosov\LaravelGettingLocations;
 
-use Antonamosov\LaravelGettingLocations\Exceptions\AttributesFiledsNotAllowedException;
+use Antonamosov\LaravelGettingLocations\Exceptions\AttributesFieldsNotAllowedException;
 use Antonamosov\LaravelGettingLocations\Exceptions\MapPointParametersNotDefinedException;
 use Antonamosov\LaravelGettingLocations\Services\MapServiceInterface;
 
@@ -14,7 +14,7 @@ class LaravelGettingLocations
     private $mapPointParameters;
 
     /**
-     * @var MapsInterface
+     * @var MapServiceInterface
      */
     private $mapService;
 
@@ -46,6 +46,7 @@ class LaravelGettingLocations
      * @param array $mapPointParameters
      * @return object
      * @throws MapPointParametersNotDefinedException
+     * @throws AttributesFieldsNotAllowedException
      */
     public function getLocations(array $mapPointParameters)
     {
@@ -128,7 +129,7 @@ class LaravelGettingLocations
     }
 
     /**
-     * @throws AttributesFiledsNotAllowedException
+     * @throws AttributesFieldsNotAllowedException
      * @throws MapPointParametersNotDefinedException
      */
     private function checkMapPointParameters()
@@ -140,7 +141,7 @@ class LaravelGettingLocations
         $arrDiff = array_diff_key($this->mapPointParameters, array_flip($this->allowedAttributesFields));
 
         if (count($arrDiff)) {
-            throw new AttributesFiledsNotAllowedException(implode(', ', array_flip($arrDiff)) . " map point parameters not allowed.");
+            throw new AttributesFieldsNotAllowedException(implode(', ', array_flip($arrDiff)) . " map point parameters not allowed.");
         }
     }
 }

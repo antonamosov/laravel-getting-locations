@@ -3,12 +3,11 @@
 namespace Antonamosov\LaravelGettingLocations\Services;
 
 use Antonamosov\LaravelGettingLocations\CurlClient;
-use Antonamosov\LaravelGettingLocations\Exceptions\AttributesFiledsNotAllowedException;
 use Antonamosov\LaravelGettingLocations\Exceptions\ConnectionParameterNotDefinedException;
 use Antonamosov\LaravelGettingLocations\Exceptions\DecodeJsonResultException;
-use Antonamosov\LaravelGettingLocations\Exceptions\MapPointParametersNotDefinedException;
 use Antonamosov\LaravelGettingLocations\Exceptions\CurlClientException;
 use Antonamosov\LaravelGettingLocations\Exceptions\FailedJsonFormatException;
+use Antonamosov\LaravelGettingLocations\Exceptions\InternalHostConnectionException;
 use Psr\Http\Message\ResponseInterface;
 
 class BingMapsService implements MapServiceInterface
@@ -26,17 +25,22 @@ class BingMapsService implements MapServiceInterface
     /**
      * @var string
      */
-    private $setAddressLine;
+    private $addressLine;
 
     /**
      * @var string
      */
-    private $setPostalCode;
+    private $postalCode;
 
     /**
      * @var string
      */
     private $apiKey;
+
+    /**
+     * @var string
+     */
+    private $baseUri;
 
     /**
      * @var mixed | ResponseInterface
@@ -151,6 +155,8 @@ class BingMapsService implements MapServiceInterface
     /**
      * @return object
      * @throws FailedJsonFormatException
+     * @throws DecodeJsonResultException
+     * @throws FailedJsonFormatException
      */
     private function getSuccessResult()
     {
@@ -160,6 +166,7 @@ class BingMapsService implements MapServiceInterface
     /**
      * @return object
      * @throws FailedJsonFormatException
+     * @throws DecodeJsonResultException
      */
     private function getFormattedLocations()
     {
@@ -194,7 +201,7 @@ class BingMapsService implements MapServiceInterface
     }
 
     /**
-     * @param array $data
+     * @param $data
      * @param bool $success
      * @return object
      */
@@ -207,7 +214,7 @@ class BingMapsService implements MapServiceInterface
     }
 
     /**
-     * 
+     * @throws InternalHostConnectionException
      */
     private function checkResponse()
     {

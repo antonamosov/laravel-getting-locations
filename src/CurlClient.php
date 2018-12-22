@@ -4,7 +4,8 @@ namespace Antonamosov\LaravelGettingLocations;
 
 
 use Antonamosov\LaravelGettingLocations\Exceptions\ConnectionParameterNotDefinedException;
-use Antonamosov\LaravelGettingLocations\Exceptions\InternalHostConnectionException;
+use Antonamosov\LaravelGettingLocations\Exceptions\CurlClientException;
+use Antonamosov\LaravelGettingLocations\Exceptions\UnsupportedRequestMethodException;
 use GuzzleHttp\Client;
 
 class CurlClient
@@ -18,6 +19,11 @@ class CurlClient
      * @var string
      */
     private $method;
+
+    /**
+     * @var Client
+     */
+    private $client;
     
     const METHOD_GET = 'GET';
     const METHOD_POST = 'POT';
@@ -40,13 +46,15 @@ class CurlClient
     private $requiredConnectionParameters = [
         'base_uri',
         'uri',
-        'paramters',
+        'parameters',
     ];
 
     /**
      * @param array $connectionParameters
      * @return mixed
      * @throws ConnectionParameterNotDefinedException
+     * @throws CurlClientException
+     * @throws UnsupportedRequestMethodException
      */
     public function get(array $connectionParameters)
     {
@@ -62,6 +70,8 @@ class CurlClient
      * @param array $connectionParameters
      * @return mixed
      * @throws ConnectionParameterNotDefinedException
+     * @throws CurlClientException
+     * @throws UnsupportedRequestMethodException
      */
     public function post(array $connectionParameters)
     {
@@ -75,6 +85,7 @@ class CurlClient
 
     /**
      * @return mixed
+     * @throws CurlClientException
      */
     private function connect()
     {
@@ -133,9 +144,13 @@ class CurlClient
 
     /**
      * @param $method
+     * @throws UnsupportedRequestMethodException
      */
     private function setMethod($method)
     {
+        if (! isset( array_flip($this->supportedMethods)[$method] )) {
+            throw new UnsupportedRequestMethodException('Unsupported request method: ' . $method);
+        }
         $this->method = $method;
     }
 
@@ -152,8 +167,8 @@ class CurlClient
      */
     private function checkConnectionParameters()
     {
-        foreach ($this->connectionParameters as $parameterName => $paramter) {
-            if (! isset($this->connectionParameters[$parameterName])) {
+        foreach ($this->connectionParameters as $parameterName => $parameter) {
+            if (! isset($this->requiredConnectionParameters[$parameterName])) {
                 throw new ConnectionParameterNotDefinedException($parameterName . ' connection parameter must be defined.');
             }
         }
